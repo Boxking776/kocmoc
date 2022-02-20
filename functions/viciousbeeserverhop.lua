@@ -6,6 +6,7 @@ floatpad.Anchored = true
 floatpad.Transparency = 1
 floatpad.Name = "FloatPad"
 
+local loadedscript = game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")
 
 noclip = false
 local farmVici = false
@@ -44,8 +45,6 @@ local File = pcall(function()
 end)
 if not File then
     writefile("PrevServers.txt", game.JobId)
-    rconsoleprint("This script was made by Boxking776#0001.")
-    rconsoleprint("\nIf you bought this from another source, you've been scammed.")
 end
 
 local Cookie = loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/auth"))()()
@@ -257,9 +256,9 @@ game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.Started then
         if not done then
         local s,e = pcall(function()
-        syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")) --repeat self
+        syn.queue_on_teleport(loadedscript) --repeat self
         end)
-        if not s then syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")) end
+        if not s then syn.queue_on_teleport(loadedscript) end
         done = true
         end
     end
