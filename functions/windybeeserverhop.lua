@@ -47,6 +47,7 @@ local function Log(Text,Color,NewLine)
         rconsoleprint("@@"..Color.."@@")
     end
     if NewLine then rconsoleprint("\n") end
+    rconsolename("Kocmoc Serverhopper")
     rconsoleprint(Text)
 end
 
