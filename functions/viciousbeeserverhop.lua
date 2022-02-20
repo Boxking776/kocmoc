@@ -237,6 +237,7 @@ local function Log(Text,Color,NewLine)
         rconsoleprint("@@"..Color.."@@")
     end
     if NewLine then rconsoleprint("\n") end
+    rconsolename("Kocmoc Serverhopper")
     rconsoleprint(Text)
 end
 
@@ -255,7 +256,7 @@ local done = false
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.Started then
         if not done then
-        syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua"))
+        syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")) --repeat self
         done = true
         end
     end
@@ -270,7 +271,7 @@ if isVici() then
     Log(" ",nil,true)
     game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:WaitForChild("Alerts").ChildAdded:Connect(function(i)
         wait(0.5)
-        if string.find(i.Text,"from Vicious") then
+        if string.find(i.Text,"Vicious") then
             Log(i.Text,generateStyle(i.Text),true)
         end
     end)
@@ -282,4 +283,4 @@ if isVici() then
 end
 end)
 
-if not succ then stawtTewepowt() end repeat wait() until game:IsLoaded()
+if not succ then stawtTewepowt() Log("Vicious Bee Despawned","RED",true) end repeat wait() until game:IsLoaded()
