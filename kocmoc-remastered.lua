@@ -17,12 +17,17 @@ function maskequip(mask) local ohString1 = "Equip" local ohTable2 = { ["Mute"] =
 local lasttouched = nil
 local done = true
 local hi = false
-
+local Items = require(game:GetService("ReplicatedStorage").EggTypes).GetTypes()
+local plrhive = game.Players.LocalPlayer.Honeycomb.Value
 -- Script tables
-
+for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
+    if v:IsA("TextLabel") and string.find(v.Text,"Kocmoc v") then
+        v.Parent.Parent:Destroy()
+    end
+end
 local temptable = {
-    version = "3.0",
-    blackfield = "Ant Field",
+    version = "3.0.2",
+    blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
     whitefields = {},
@@ -31,7 +36,7 @@ local temptable = {
     puffshroomdetected = false,
     magnitude = 70,
     blacklist = {
-        "e_mrFluk2281"
+        ""
     },
     running = false,
     configname = "",
@@ -152,6 +157,28 @@ for _,v in next, game:GetService("Workspace").MonsterSpawners:GetChildren() do t
 local accesoriestable = {}
 for _,v in next, game:GetService("ReplicatedStorage").Accessories:GetChildren() do if v.Name ~= "UpdateMeter" then table.insert(accesoriestable, v.Name) end end
 for i,v in pairs(getupvalues(require(game:GetService("ReplicatedStorage").PlanterTypes).GetTypes)) do for e,z in pairs(v) do table.insert(temptable.allplanters, e) end end
+local donatableItemsTable = {}
+local treatsTable = {}
+for i,v in pairs(Items) do
+    if v.DonatableToWindShrine == true then
+        table.insert(donatableItemsTable,i)
+    end
+end
+for i,v in pairs(Items) do
+    if v.TreatValue then
+        table.insert(treatsTable,i)
+    end
+end
+local buffTable = {
+    "Blue Extract";
+    "Red Extract";
+    "Oil";
+    "Enzymes";
+    "Glue";
+    "Glitter";
+    "Tropical Drink";
+}
+
 table.sort(fieldstable)
 table.sort(accesoriestable)
 table.sort(toystable)
@@ -159,6 +186,8 @@ table.sort(spawnerstable)
 table.sort(masktable)
 table.sort(temptable.allplanters)
 table.sort(collectorstable)
+table.sort(donatableItemsTable)
+table.sort(buffTable)
 
 -- float pad
 
@@ -248,7 +277,9 @@ local kocmoc = {
         autokillmobs = false,
         autoant = false,
         killwindy = false,
-        godmode = false
+        godmode = false,
+        disableconversion = false,
+        autodonate = false,
     },
     vars = {
         field = "Ant Field",
@@ -259,7 +290,12 @@ local kocmoc = {
         jumppower = 70,
         npcprefer = "All Quests",
         farmtype = "Walk",
-        monstertimer = 3
+        monstertimer = 3,
+        autodigmode = "Normal",
+        donoItem = "Coconut",
+        donoAmount = 25,
+        selectedTreat = "Treat",
+        selectedTreatAmount = 0,
     },
     dispensesettings = {
         blub = false,
@@ -656,6 +692,36 @@ function makequests()
     end end end end end
 end
 
+local function donateToShrine(item,qnt)
+    print(qnt)
+    local s,e = pcall(function()
+    game:GetService("ReplicatedStorage").Events.WindShrineDonation:InvokeServer(item, qnt)
+    wait(0.5)
+    game.ReplicatedStorage.Events.WindShrineTrigger:FireServer()
+    
+    local UsePlatform = game:GetService("Workspace").NPCs["Wind Shrine"].Stage
+    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = UsePlatform.CFrame + Vector3.new(0,5,0)
+    
+    for i = 1,120 do
+    wait(0.05)
+    for i,v in pairs(game.Workspace.Collectibles:GetChildren()) do
+        if (v.Position-UsePlatform.Position).magnitude < 60 and v.CFrame.YVector.Y == 1 then
+            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+        end
+    end
+    end
+    end)
+    if not s then print(e) end
+end
+
+local function isWindshrineOnCooldown()
+    local isOnCooldown = false
+    local v1 = require(game.ReplicatedStorage.ClientStatCache):Get();
+    local cooldown = 3600 - (require(game.ReplicatedStorage.OsTime)() - (require(game.ReplicatedStorage.StatTools).GetLastCooldownTime(v1, "WindShrine")))
+    if cooldown > 0 then isOnCooldown = true end
+    return isOnCooldown
+end
+
 local Config = { WindowName = "Kocmoc v"..temptable.version.." Remastered", Color = Color3.fromRGB(164, 84, 255), Keybind = Enum.KeyCode.Semicolon}
 local Window = library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -663,6 +729,7 @@ local hometab = Window:CreateTab("Home")
 local farmtab = Window:CreateTab("Farming")
 local combtab = Window:CreateTab("Combat")
 local wayptab = Window:CreateTab("Waypoints")
+local itemstab = Window:CreateTab("Items")
 local misctab = Window:CreateTab("Misc")
 local extrtab = Window:CreateTab("Extra")
 local setttab = Window:CreateTab("Settings")
@@ -688,6 +755,8 @@ local fielddropdown = farmo:CreateDropdown("Field", fieldstable, function(String
 convertatslider = farmo:CreateSlider("Convert At", 0, 100, 100, false, function(Value) kocmoc.vars.convertat = Value end)
 local autofarmtoggle = farmo:CreateToggle("Autofarm ⚙", nil, function(State) kocmoc.toggles.autofarm = State end) autofarmtoggle:CreateKeybind("U", function(Key) end)
 farmo:CreateToggle("Autodig", nil, function(State) kocmoc.toggles.autodig = State end)
+farmo:CreateDropdown("Autodig Mode", {"Normal","Collector Steal"}, function(Option)  kocmoc.vars.autodigmode = Option end)
+farmo:CreateToggle("Don't Convert Pollen", nil, function(State) kocmoc.toggles.disableconversion = State end)
 farmo:CreateToggle("Auto Sprinkler", nil, function(State) kocmoc.toggles.autosprinkler = State end)
 farmo:CreateToggle("Farm Bubbles", nil, function(State) kocmoc.toggles.farmbubbles = State end)
 farmo:CreateToggle("Farm Flames", nil, function(State) kocmoc.toggles.farmflame = State end)
@@ -729,6 +798,13 @@ mobkill:CreateToggle("Auto Kill Mobs", nil, function(State) kocmoc.toggles.autok
 mobkill:CreateToggle("Avoid Mobs", nil, function(State) kocmoc.toggles.avoidmobs = State end)
 mobkill:CreateToggle("Auto Ant", nil, function(State) kocmoc.toggles.autoant = State end):AddToolTip("You Need Spark Stuff 😋; Goes to Ant Challenge after pollen converting")
 
+local serverhopkill = combtab:CreateSection("Serverhopping Combat")
+serverhopkill:CreateButton("Vicious Bee Serverhopper ⚠️",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua"))() end):AddToolTip("Serverhops for rouge vicious bees")
+serverhopkill:CreateButton("Windy Bee Serverhopper ⚠️",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/windybeeserverhop.lua"))() end):AddToolTip("Serverhops for wild windy bees")
+serverhopkill:CreateLabel("")
+serverhopkill:CreateLabel("[⚠️] These functions will unload the UI")
+serverhopkill:CreateLabel("")
+
 local amks = combtab:CreateSection("Auto Kill Mobs Settings")
 amks:CreateTextBox('Kill Mobs After x Convertions', 'default = 3', true, function(Value) kocmoc.vars.monstertimer = tonumber(Value) end)
 
@@ -739,7 +815,12 @@ wayp:CreateDropdown("Monster Teleports", spawnerstable, function(Option) d = gam
 wayp:CreateDropdown("Toys Teleports", toystable, function(Option) d = game:GetService("Workspace").Toys:FindFirstChild(Option).Platform game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(d.Position.X, d.Position.Y+3, d.Position.Z) end)
 wayp:CreateButton("Teleport to hive", function() game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Players").LocalPlayer.SpawnPos.Value end)
 
+local useitems = itemstab:CreateSection("Use Items")
 
+useitems:CreateButton("Use All Buffs ⚠️",function() for i,v in pairs(buffTable) do  game:GetService("ReplicatedStorage").Events.PlayerActivesCommand:FireServer({["Name"]=v}) end end)
+useitems:CreateLabel("")
+
+for i,v in pairs(buffTable) do useitems:CreateButton("Use "..v,function() game:GetService("ReplicatedStorage").Events.PlayerActivesCommand:FireServer({["Name"]=v}) end) end
 local miscc = misctab:CreateSection("Misc")
 miscc:CreateButton("Ant Challenge Semi-Godmode", function() api.tween(1, CFrame.new(93.4228, 32.3983, 553.128)) task.wait(1) game.ReplicatedStorage.Events.ToyEvent:FireServer("Ant Challenge") game.Players.LocalPlayer.Character.HumanoidRootPart.Position = Vector3.new(93.4228, 42.3983, 553.128) task.wait(2) game.Players.LocalPlayer.Character.Humanoid.Name = 1 local l = game.Players.LocalPlayer.Character["1"]:Clone() l.Parent = game.Players.LocalPlayer.Character l.Name = "Humanoid" task.wait() game.Players.LocalPlayer.Character["1"]:Destroy() api.tween(1, CFrame.new(93.4228, 32.3983, 553.128)) task.wait(8) api.tween(1, CFrame.new(93.4228, 32.3983, 553.128)) end)
 local wstoggle = miscc:CreateToggle("Walk Speed", nil, function(State) kocmoc.toggles.loopspeed = State end) wstoggle:CreateKeybind("K", function(Key) end)
@@ -752,7 +833,30 @@ misco:CreateDropdown("Equip Collectors", collectorstable, function(Option) local
 misco:CreateDropdown("Generate Amulet", {"Supreme Star Amulet", "Diamond Star Amulet", "Gold Star Amulet","Silver Star Amulet","Bronze Star Amulet","Moon Amulet"}, function(Option) local A_1 = Option.." Generator" local Event = game:GetService("ReplicatedStorage").Events.ToyEvent Event:FireServer(A_1) end)
 misco:CreateButton("Export Stats Table", function() local StatCache = require(game.ReplicatedStorage.ClientStatCache)writefile("Stats_"..api.nickname..".json", StatCache:Encode()) end)
 
+local autofeed = itemstab:CreateSection("Auto Feed")
 
+local function feedAllBees(treat,amt)
+    for L = 1,5 do
+        for U = 1,10 do
+            game:GetService("ReplicatedStorage").Events.ConstructHiveCellFromEgg:InvokeServer(L, U, treat, amt)
+        end
+    end
+end
+
+autofeed:CreateDropdown("Select Treat",treatsTable,function(option) kocmoc.vars.selectedTreat = option end)
+autofeed:CreateTextBox("Treat Amount","10",false,function(Value) kocmoc.vars.selectedTreatAmount = tonumber(Value) end)
+autofeed:CreateButton("Feed All Bees",function() feedAllBees(kocmoc.vars.selectedTreat,kocmoc.vars.selectedTreatAmount) end)
+
+local windShrine = itemstab:CreateSection("Wind Shrine")
+windShrine:CreateDropdown("Select Item", donatableItemsTable, function(Option)  kocmoc.vars.donoItem = Option end)
+windShrine:CreateTextBox("Item Quantity","10",false,function(Value) kocmoc.vars.donoAmount = tonumber(Value) end)
+windShrine:CreateButton("Donate",function()
+    donateToShrine(kocmoc.vars.donoItem,kocmoc.vars.donoAmount)
+    print(kocmoc.vars.donoAmount)
+end)
+windShrine:CreateToggle("Auto Donate",nil,function(selection)
+    kocmoc.toggles.autodonate = selection
+end)
 local extras = extrtab:CreateSection("Extras")
 extras:CreateButton("Boost FPS", function()loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc-bss-archive/main/functions/boostfps.lua"))()end)
 extras:CreateButton("Destroy Decals", function()
@@ -974,6 +1078,7 @@ task.spawn(function() while task.wait() do
                 if not kocmoc.toggles.farmflower then getflower() end
             end
         elseif tonumber(pollenpercentage) >= tonumber(kocmoc.vars.convertat) then
+            if not kocmoc.toggles.disableconversion then
             temptable.tokensfarm = false
             api.tween(2, game:GetService("Players").LocalPlayer.SpawnPos.Value * CFrame.fromEulerAnglesXYZ(0, 110, 0) + Vector3.new(0, 0, 9))
             task.wait(2)
@@ -1004,7 +1109,7 @@ task.spawn(function() while task.wait() do
             end
         end
     end
-end end end)
+end end end end)
 
 task.spawn(function()
     while task.wait(1) do
@@ -1069,10 +1174,28 @@ task.spawn(function() while task.wait() do
     end
 end end)
 
+local function collectorSteal()
+    if kocmoc.vars.autodigmode == "Collector Steal" then
+        for i,v in pairs(game.Players:GetChildren()) do
+            if v.Name ~= game.Players.LocalPlayer.Name then
+                if v then
+                    if v.Character then
+                        if v.Character:FindFirstChildWhichIsA("Tool") then
+                            if v.Character:FindFirstChildWhichIsA("Tool"):FindFirstChild("ClickEvent") then
+                    v.Character:FindFirstChildWhichIsA("Tool").ClickEvent:FireServer()
+                end
+            end
+        end
+        end
+        end
+        end
+    end
+end
+
 task.spawn(function() while task.wait(0.001) do
     if kocmoc.toggles.traincrab then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-259, 111.8, 496.4) * CFrame.fromEulerAnglesXYZ(0, 110, 90) temptable.float = true temptable.float = false end
     if kocmoc.toggles.farmrares then for k,v in next, game.workspace.Collectibles:GetChildren() do if v.CFrame.YVector.Y == 1 then if v.Transparency == 0 then decal = v:FindFirstChildOfClass("Decal") for e,r in next, kocmoc.rares do if decal.Texture == r or decal.Texture == "rbxassetid://"..r then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame break end end end end end end
-    if kocmoc.toggles.autodig then workspace.NPCs.Onett.Onett["Porcelain Dipper"].ClickEvent:FireServer() if game.Players.LocalPlayer then if game.Players.LocalPlayer.Character then if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") then if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("ClickEvent", true) then clickevent = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("ClickEvent", true) or nil end end end if clickevent then clickevent:FireServer() end end end
+    if kocmoc.toggles.autodig then if game.Players.LocalPlayer then if game.Players.LocalPlayer.Character then if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") then if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("ClickEvent", true) then clickevent = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("ClickEvent", true) or nil end end end if clickevent then clickevent:FireServer() end end collectorSteal() workspace.NPCs.Onett.Onett["Porcelain Dipper"].ClickEvent:FireServer() end
 end end)
 
 game:GetService("Workspace").Particles.Folder2.ChildAdded:Connect(function(child)
@@ -1110,7 +1233,7 @@ game:GetService("Workspace").NPCBees.ChildRemoved:Connect(function(v)
     end
 end)
 
-task.spawn(function() while task.wait(.1) do
+task.spawn(function() while task.wait(1) do
     if not temptable.converting then
         if kocmoc.toggles.autosamovar then
             game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Samovar")
@@ -1155,6 +1278,11 @@ task.spawn(function() while task.wait(.1) do
                 if (v.Position-platformm.Position).magnitude < 25 and v.CFrame.YVector.Y == 1 then
                     api.humanoidrootpart().CFrame = v.CFrame
                 end
+            end
+        end
+        if kocmoc.toggles.autodonate then
+            if isWindshrineOnCooldown() == false then
+            donateToShrine(kocmoc.vars.donoItem,kocmoc.vars.donoAmount)
             end
         end
     end
@@ -1248,6 +1376,10 @@ task.spawn(function() while task.wait() do
         temptable.running = false
     end
 end end)
+
+local function loadConfig()
+    
+end
 
 hives = game.Workspace.Honeycombs:GetChildren() for i = #hives, 1, -1 do  v = game.Workspace.Honeycombs:GetChildren()[i] if v.Owner.Value == nil then game.ReplicatedStorage.Events.ClaimHive:FireServer(v.HiveID.Value) end end
 if _G.autoload then if isfile("kocmoc/BSS_".._G.autoload..".json") then kocmoc = game:service'HttpService':JSONDecode(readfile("kocmoc/BSS_".._G.autoload..".json")) end end
