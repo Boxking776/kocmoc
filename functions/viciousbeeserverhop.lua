@@ -256,11 +256,16 @@ local done = false
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.Started then
         if not done then
+        local s,e = pcall(function()
         syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")) --repeat self
+        end)
+        if not s then syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")) end
         done = true
         end
     end
 end)
+
+local lootnum = 0
 
 local succ,err = pcall(function()
 if isVici() then
@@ -271,8 +276,16 @@ if isVici() then
     Log(" ",nil,true)
     game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:WaitForChild("Alerts").ChildAdded:Connect(function(i)
         wait(0.5)
-        if string.find(i.Text,"Vicious") then
+        if string.find(i.Text,"from Vic") then
+            lootnum = lootnum + 1
             Log(i.Text,generateStyle(i.Text),true)
+        end
+    end)
+    game:GetService("Players").PlayerRemoving:Connect(function(plr)
+        if plr.Name == game:GetService("Players").LocalPlayer.Name then
+            if lootnum == 0 then
+                Log("Vicious Bee Despawned","RED",true) 
+            end
         end
     end)
     FarmViciousBee()
