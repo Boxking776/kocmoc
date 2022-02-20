@@ -21,7 +21,9 @@ local Items = require(game:GetService("ReplicatedStorage").EggTypes).GetTypes()
 
 hives = game.Workspace.Honeycombs:GetChildren() for i = #hives, 1, -1 do  v = game.Workspace.Honeycombs:GetChildren()[i] if v.Owner.Value == nil then game.ReplicatedStorage.Events.ClaimHive:FireServer(v.HiveID.Value) end end
 
-local plrhive = game.Players.LocalPlayer.Honeycomb.Value
+--repeat wait() until game.Players.LocalPlayer.Honeycomb
+--local plrhive = game.Players.LocalPlayer:FindFirstChild("Honeycomb")
+
 -- Script tables
 for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     if v:IsA("TextLabel") and string.find(v.Text,"Kocmoc v") then
