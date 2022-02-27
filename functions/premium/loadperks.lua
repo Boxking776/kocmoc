@@ -1,4 +1,4 @@
-local ver = 4
+local ver = 5
 
 function loadPremium(Window)
   print("requested load")
