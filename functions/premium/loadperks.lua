@@ -1,6 +1,7 @@
-function loadPremium(library)
+function loadPremium(Window)
   print("requested load")
-  if library ~= nil then print("library passed") end
+  if Window ~= nil then print("library passed") end
+  local premtab = Window:CreateTab("Premium")
 end
 
 return loadPremium
