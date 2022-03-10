@@ -244,14 +244,17 @@ function nAPI:fetchBestMatch(nectartype,field)
         if nAPI:GetItemListWithValue()[i.."Planter"] then
         if nAPI:GetItemListWithValue()[i.."Planter"] >= 1 then
             if v.NectarTypes[nectartype] ~= nil then
-                if v.NectarTypes[nectartype] > bestNectarMult then
-                    local totalNectarFieldGrowthMult = 0
+                local holderValue = 0
+                    holderValue = v.NectarTypes[nectartype]
+                    
                     if v["GrowthFields"][field] ~= nil then
-                        totalNectarFieldGrowthMult = totalNectarFieldGrowthMult + (v["GrowthFields"][field])
+                        holderValue = (holderValue * v["GrowthFields"][field])
                     end
-                    bestNectarMult = (v.NectarTypes[nectartype] + totalNectarFieldGrowthMult)
+                
+                    if holderValue > bestNectarMult then
+                    bestNectarMult = (v.NectarTypes[nectartype] * totalNectarFieldGrowthMult)
                     bestPlanter = i
-                end
+                    end
             end
         end
         end
