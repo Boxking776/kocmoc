@@ -252,7 +252,7 @@ function nAPI:fetchBestMatch(nectartype,field)
                     end
                 
                     if holderValue > bestNectarMult then
-                    bestNectarMult = (v.NectarTypes[nectartype] * totalNectarFieldGrowthMult)
+                    bestNectarMult = holderValue
                     bestPlanter = i
                     end
             end
