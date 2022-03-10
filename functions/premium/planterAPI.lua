@@ -373,9 +373,9 @@ function nAPI:RequestCollectPlanters(planterTable)
             repeat wait(0.7)
             nAPI:collectSpecificPlanter(v["PM"],v["AID"])
             until nAPI:checkIfPlanterExists(v["AID"]) == false
-            plLootCollection = true
+            getgenv().plLootCollection = true
             wait(5)
-            plLootCollection = false
+            getgenv().plLootCollection = false
         end
     end
     end)
