@@ -342,8 +342,6 @@ function nAPI:checkIfPlanterExists(pNum)
     return exists
 end
 
-local growthCollectionPercent = 90
-
 function nAPI:collectSpecificPlanter(prt,id)
     if prt then
         if game.Players.LocalPlayer.Character then
@@ -362,7 +360,7 @@ function nAPI:RequestCollectPlanters(planterTable)
     if planterTable then
         for i,v in pairs(planterTable) do
             if v["GrowthPercent"] ~= nil then
-                if v["GrowthPercent"] >= (growthCollectionPercent/100) then
+                if v["GrowthPercent"] >= (getgenv().growthCollectionPercent/100) then
                     table.insert(plantersToCollect,{["PM"]=v["PotModel"].PrimaryPart; ["AID"]=v["ActorID"]})
                 end
             end
