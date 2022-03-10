@@ -205,7 +205,7 @@ end
 function nAPI:isBlacklisted(nectartype,blacklist)
     local bl = false
     for i,v in pairs(blacklist) do if v == nectartype then bl = true end end
-    for i,v in pairs(gettgenv().NectarBlacklist) do if v == nectartype then bl = true end end
+    for i,v in pairs(getgenv().NectarBlacklist) do if v == nectartype then bl = true end end
     return bl
 end
 
