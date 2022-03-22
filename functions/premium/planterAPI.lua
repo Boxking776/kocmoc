@@ -413,10 +413,19 @@ function nAPI:getNectarFromField(field)
     return foundnectar
 end
 
-function nAPI:fetchNectarBlacklist()
+function nAPI:fetchNectarBlacklist(manbl)
     local nblacklist = {}
     for i,v in pairs(nectarData) do
         if nAPI:isNectarPending(i) == true then table.insert(nblacklist,i) end
+    end
+    for i,v in pairs(manbl) do
+        local exists = false
+        for k,e in pairs(nblacklist) do
+            if e == v then exists = true end
+        end
+        if exists == false then
+            table.insert(nblacklist,v)
+        end
     end
     return nblacklist
 end
