@@ -6,6 +6,7 @@ getgenv().ExploitSpecific = "📜"
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/library.lua"))()
 getgenv().api = loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/api.lua"))()
+local bssapi = loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/bssapi.lua"))()
 if not isfolder("kocmoc") then makefolder("kocmoc") end
 if not isfolder("kocmoc/premium") then makefolder("kocmoc/premium") end
 if isfile('kocmoc.txt') == false then (syn and syn.request or http_request or request)({ Url = "http://127.0.0.1:6463/rpc?v=1",Method = "POST",Headers = {["Content-Type"] = "application/json",["Origin"] = "https://discord.com"},Body = game:GetService("HttpService"):JSONEncode({cmd = "INVITE_BROWSER",args = {code = "kTNMzbxUuZ"},nonce = game:GetService("HttpService"):GenerateGUID(false)}),writefile('kocmoc.txt', "discord")})end
@@ -850,11 +851,22 @@ local loadingFunctions = loadingInfo:CreateLabel("Loading Functions..")
 wait(1)
 loadingFunctions:UpdateText("Loaded Functions")
 local loadingBackend = loadingInfo:CreateLabel("Loading Backend..")
+if not string.find(string.lower(identifyexecutor()),"wrd") then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/premium/loadperks.lua"))()
 if getgenv().LoadPremium then
 getgenv().LoadPremium("WindowLoad",Window)
 else
     warn("Error loading Kocmoc Premium")
+end
+else
+     game.StarterGui:SetCore(
+            "SendNotification",
+            {
+                Title = "Exploit Issue",
+                Text = "Please get a better executor to use premium functions\ne.g Krnl",
+                Duration = 30
+            }
+        )
 end
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/premium/loadperks.lua"))()("WindowLoad",Window)
 
