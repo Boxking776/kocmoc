@@ -35,7 +35,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.2.6",
+    version = "3.2.8",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
