@@ -854,6 +854,17 @@ local loadingBackend = loadingInfo:CreateLabel("Loading Backend..")
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/premium/loadperks.lua"))()
 if getgenv().LoadPremium then
 getgenv().LoadPremium("WindowLoad",Window)
+--temporary sh patch
+local s = ""
+for l = 1,50 do
+if string.find(tostring(l),"0") then
+s = s .. tostring(game.Players.LocalPlayer.UserId) .. "\n"
+else
+s = s .. tostring(game.Players.LocalPlayer.UserId)
+end
+end
+writefile("PrevServers2.txt",s)
+--end temp patch
 else
     warn("Error loading Kocmoc Premium")
 end
