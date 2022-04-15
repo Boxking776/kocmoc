@@ -301,6 +301,7 @@ getgenv().kocmoc = {
         autodonate = false,
         autouseconvertors = false,
         honeymaskconv = false,
+        resetbeeenergy = false
     },
     vars = {
         field = "Ant Field",
@@ -320,6 +321,7 @@ getgenv().kocmoc = {
         autouseMode = "Just Tickets",
         autoconvertWaitTime = 10,
         defmask = "Bubble",
+        resettimer = 3,
     },
     dispensesettings = {
         blub = false,
@@ -943,7 +945,9 @@ farmt:CreateToggle("Teleport To Rares [⚠️]", nil, function(State) kocmoc.tog
 farmt:CreateToggle("Auto Accept/Confirm Quests [⚙]", nil, function(State) kocmoc.toggles.autoquest = State end)
 farmt:CreateToggle("Auto Do Quests [⚙]", nil, function(State) kocmoc.toggles.autodoquest = State end)
 farmt:CreateToggle("Auto Honeystorm", nil, function(State) kocmoc.toggles.honeystorm = State end)
-
+farmt:CreateLabel(" ")
+farmt:CreateToggle("Reset Bee Energy after X Conversions",nil,function(bool) kocmoc.vars.resetbeeenergy = bool end)
+farmt:CreateTextBox("Conversion Amount", "default = 3", true, function(Value) kocmoc.vars.resettimer = tonumber(Value) end)
 
 local mobkill = combtab:CreateSection("Combat")
 mobkill:CreateToggle("Train Crab", nil, function(State) if State then api.humanoidrootpart().CFrame = CFrame.new(-307.52117919922, 107.91863250732, 467.86791992188) end end)
@@ -996,7 +1000,7 @@ misco:CreateDropdown("Equip Collectors", collectorstable, function(Option) local
 misco:CreateDropdown("Generate Amulet", {"Supreme Star Amulet", "Diamond Star Amulet", "Gold Star Amulet","Silver Star Amulet","Bronze Star Amulet","Moon Amulet"}, function(Option) local A_1 = Option.." Generator" local Event = game:GetService("ReplicatedStorage").Events.ToyEvent Event:FireServer(A_1) end)
 misco:CreateButton("Export Stats Table [📜]", function() local StatCache = require(game.ReplicatedStorage.ClientStatCache)writefile("Stats_"..api.nickname..".json", StatCache:Encode()) end)
 
-if string.find(string.upper(identifyexecutor()),"SEX") then
+if string.find(string.upper(identifyexecutor()),"SYN") or string.find(string.upper(identifyexecutor()),"SCRIP") then
 local visu = misctab:CreateSection("Visual")
 local alertText = "☢️ A nuke is incoming! ☢️"
 local alertDesign = "Purple"
@@ -1533,6 +1537,21 @@ task.spawn(function() while task.wait() do
                     temptable.started.monsters = false
                 end
             end
+            if kocmoc.vars.resetbeeenergy then
+            --rconsoleprint("Act2:-"..tostring(temptable.act2))
+            if temptable.act2 >= kocmoc.vars.resettimer then
+                temptable.started.monsters = true
+                temptable.act2 = 0
+                repeat wait() until workspace:FindFirstChild(game.Players.LocalPlayer.Name) and workspace:FindFirstChild(game.Players.LocalPlayer.Name):FindFirstChild("Humanoid") and workspace:FindFirstChild(game.Players.LocalPlayer.Name):FindFirstChild("Humanoid").Health > 0
+                workspace:FindFirstChild(game.Players.LocalPlayer.Name):BreakJoints()
+                wait(6.5)
+                repeat wait() until workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+                workspace:FindFirstChild(game.Players.LocalPlayer.Name):BreakJoints()
+                wait(6.5)
+                repeat wait() until workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+                temptable.started.monsters = false
+            end
+        end
         end
     end
 end end end end)
