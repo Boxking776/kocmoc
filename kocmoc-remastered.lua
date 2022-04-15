@@ -117,6 +117,7 @@ getgenv().temptable = {
     crosshair = false,
     coconut = false,
     act = 0,
+    act2 = 0,
     ['touchedfunction'] = function(v)
         if lasttouched ~= v then
             if v.Parent.Name == "FlowerZones" then
