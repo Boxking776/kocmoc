@@ -35,7 +35,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.2.12",
+    version = "3.2.18",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -1834,7 +1834,69 @@ end end)
 
 loadingLoops:UpdateText("Loaded Loops")
 
-spawn(function()
+local function getMonsterName(name)
+    local newName = nil
+    local keywords = {
+        ["Mushroom"]="Ladybug";
+        ["Rhino"]="Rhino Beetle";
+        ["Spider"]="Spider";
+        ["Ladybug"]="Ladybug";
+        ["Scorpion"]="Scorpion";
+        ["Mantis"]="Mantis";
+        ["Beetle"]="Rhino Beetle";
+        ["Tunnel"]="Tunnel Bear";
+        ["Coco"]="Coconut Crab";
+        ["King"]="King Beetle";
+        ["Stump"]="Stump Snail";
+        ["Were"]="Werewolf"
+    }
+    for i,v in pairs(keywords) do
+        if string.find(string.upper(name),string.upper(i)) then
+            newName = v
+        end
+    end
+    if newName == nil then newName = name end
+    return newName
+end
+
+local function getNearestField(part)
+    local resultingFieldPos
+    local lowestMag = math.huge
+    for i,v in pairs(game:GetService("Workspace").FlowerZones:GetChildren()) do
+        if (v.Position - part.Position).magnitude < lowestMag then
+            lowestMag = (v.Position - part.Position).magnitude
+            resultingFieldPos = v.Position
+        end
+    end
+    if lowestMag > 100 then resultingFieldPos = part.Position + Vector3.new(0,0,10) end
+    if string.find(part.Name,"Tunnel") then resultingFieldPos = part.Position + Vector3.new(20,-70,0) end
+    return resultingFieldPos
+end
+
+local function fetchVisualMonsterString(v)
+    local mobText = nil
+            if v:FindFirstChild("Attachment") then
+            if v:FindFirstChild("Attachment"):FindFirstChild("TimerGui") then
+                if v:FindFirstChild("Attachment"):FindFirstChild("TimerGui"):FindFirstChild("TimerLabel") then
+                    if v:FindFirstChild("Attachment"):FindFirstChild("TimerGui"):FindFirstChild("TimerLabel").Visible == true then
+                        local splitTimer = string.split(v:FindFirstChild("Attachment"):FindFirstChild("TimerGui"):FindFirstChild("TimerLabel").Text," ")
+                        if splitTimer[3] ~= nil then
+                            mobText = getMonsterName(v.Name) .. ": " .. splitTimer[3]
+                        elseif splitTimer[2] ~= nil then
+                            mobText = getMonsterName(v.Name) .. ": " .. splitTimer[2]
+                        else
+                            mobText = getMonsterName(v.Name) .. ": " .. splitTimer[1]
+                        end
+                    else
+                        mobText = getMonsterName(v.Name) .. ": Ready"
+                    end
+                end
+            end
+        end
+    return mobText
+end
+
+task.spawn(function()
     loadingInfo:CreateLabel("")
     loadingInfo:CreateLabel("Script loaded!")
     wait(2)
@@ -1846,6 +1908,23 @@ spawn(function()
         end
     end
     end)
+    local panel = hometab:CreateSection("Mob Panel")
+    for i,v in pairs(game:GetService("Workspace").MonsterSpawners:GetChildren()) do
+        if not string.find(v.Name,"CaveMonster") then
+        local mobText = nil
+        mobText = fetchVisualMonsterString(v)
+        if mobText ~= nil then
+            local mob = panel:CreateButton(mobText,function()
+                api.tween(1,CFrame.new(getNearestField(v)))
+            end)
+            task.spawn(function()
+                while task.wait(1) do
+                    mob:UpdateText(fetchVisualMonsterString(v))
+                end
+            end)
+        end
+        end
+    end
 end)
 
 if _G.autoload then if isfile("kocmoc/BSS_".._G.autoload..".json") then kocmoc = game:service'HttpService':JSONDecode(readfile("kocmoc/BSS_".._G.autoload..".json")) end end
