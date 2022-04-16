@@ -1897,6 +1897,7 @@ local function fetchVisualMonsterString(v)
 end
 
 task.spawn(function()
+    pcall(function()
     loadingInfo:CreateLabel("")
     loadingInfo:CreateLabel("Script loaded!")
     wait(2)
@@ -1909,6 +1910,7 @@ task.spawn(function()
     end
     end)
     local panel = hometab:CreateSection("Mob Panel")
+    local statusTable = {}
     for i,v in pairs(game:GetService("Workspace").MonsterSpawners:GetChildren()) do
         if not string.find(v.Name,"CaveMonster") then
         local mobText = nil
@@ -1917,14 +1919,21 @@ task.spawn(function()
             local mob = panel:CreateButton(mobText,function()
                 api.tween(1,CFrame.new(getNearestField(v)))
             end)
-            task.spawn(function()
-                while task.wait(1) do
-                    mob:UpdateText(fetchVisualMonsterString(v))
-                end
-            end)
+            table.insert(statusTable,{mob,v})
         end
         end
     end
+    while wait(1) do
+        for i,v in pairs(statusTable) do
+            if v[1] and v[2] then
+                v[1]:UpdateText(
+                fetchVisualMonsterString(
+                v[2]
+                ))
+            end
+        end
+    end
+    end)
 end)
 
 if _G.autoload then if isfile("kocmoc/BSS_".._G.autoload..".json") then kocmoc = game:service'HttpService':JSONDecode(readfile("kocmoc/BSS_".._G.autoload..".json")) end end
