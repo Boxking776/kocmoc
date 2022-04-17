@@ -303,7 +303,8 @@ getgenv().kocmoc = {
         autodonate = false,
         autouseconvertors = false,
         honeymaskconv = false,
-        resetbeeenergy = false
+        resetbeeenergy = false,
+        enablestatuspanel = false,
     },
     vars = {
         field = "Ant Field",
@@ -893,10 +894,13 @@ information:CreateLabel("Originally by weuz_ and mrdevl")
 local gainedhoneylabel = information:CreateLabel("Gained Honey: 0")
 information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/kTNMzbxUuZ") end)
 information:CreateButton("Donation", function() setclipboard("https://www.paypal.com/paypalme/GHubPay") end)
-information:CreateLabel("")
-information:CreateLabel("The script will continue to be updated")
-information:CreateLabel("under new ownership.")
-information:CreateLabel("")
+information:CreateToggle("Status Panel",true,function(bool) 
+kocmoc.toggles.enablestatuspanel=bool 
+if bool == false then 
+for i,v in pairs(game:GetService("CoreGui"):GetDescendants()) do 
+if string.find(v.Name,"Mob Panel") or string.find(v.Name,"Utility Panel") then 
+v.Visible = false end end
+else for i,v in pairs(game:GetService("CoreGui"):GetDescendants()) do if string.find(v.Name,"Mob Panel") or string.find(v.Name,"Utility Panel") then v.Visible = true end end end end)
 local farmo = farmtab:CreateSection("Farming")
 local fielddropdown = farmo:CreateDropdown("Field", fieldstable, function(String) kocmoc.vars.field = String end) fielddropdown:SetOption(fieldstable[1])
 convertatslider = farmo:CreateSlider("Convert At", 0, 100, 100, false, function(Value) kocmoc.vars.convertat = Value end)
@@ -1944,6 +1948,8 @@ task.spawn(function()
     local ic1 = panel2:CreateButton("Instant Converter A: 00:00",function() api.tween(1,CFrame.new(game:GetService("Workspace").Toys["Instant Converter"].Platform.Position + Vector3.new(0,5,0))) end)
     local ic2 = panel2:CreateButton("Instant Converter B: 00:00",function() api.tween(1,CFrame.new(game:GetService("Workspace").Toys["Instant Converter B"].Platform.Position + Vector3.new(0,5,0))) end)
     local ic3 = panel2:CreateButton("Instant Converter C: 00:00",function() api.tween(1,CFrame.new(game:GetService("Workspace").Toys["Instant Converter C"].Platform.Position + Vector3.new(0,5,0))) end)
+    local wcUpd = panel2:CreateButton("Wealth Clock: 00:00",function() api.tween(1,CFrame.new(game:GetService("Workspace").Toys["Wealth Clock"].Platform.Position + Vector3.new(0,5,0))) end)
+    local mmsUpd = panel2:CreateButton("Mythic Meteor Shower: 00:00",function() api.tween(1,CFrame.new(game:GetService("Workspace").Toys["Mythic Meteor Shower"].Platform.Position + Vector3.new(0,5,0))) end)
     local utilities = {
         ["Red Field Booster"]=rfbUpd;
         ["Blue Field Booster"]=bfbUpd;
@@ -1952,8 +1958,11 @@ task.spawn(function()
         ["Instant Converter"]=ic1;
         ["Instant Converter B"]=ic2;
         ["Instant Converter C"]=ic3;
+        ["Wealth Clock"]=wcUpd;
+        ["Mythic Meteor Shower"]=mmsUpd;
     }
     while wait(1) do
+        if kocmoc.toggles.enablestatuspanel == true then
         for i,v in pairs(statusTable) do
             if v[1] and v[2] then
                 v[1]:UpdateText(
@@ -1968,7 +1977,7 @@ task.spawn(function()
             else
                 mob2:UpdateText("Mondo Chick: " .. string.gsub(
                 string.gsub(workspace.Clock.SurfaceGui:FindFirstChild("TextLabel").Text,"\n","")
-                ,"Mondo Chick: ",""))
+                ,"Mondo Chick:",""))
             end
         end 
         end end
@@ -1983,6 +1992,7 @@ task.spawn(function()
                     v:UpdateText(i..": "..require(game.ReplicatedStorage.TimeString)(cooldown))
                 end
             end
+        end
         end
     end
     end)
