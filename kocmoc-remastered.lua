@@ -1,3 +1,5 @@
+repeat wait(0.1) until game:IsLoaded()
+
 getgenv().Star = "⭐"
 getgenv().Danger = "⚠️"
 getgenv().ExploitSpecific = "📜"
