@@ -439,7 +439,7 @@ function killmobs()
                 if v.Name:match("Werewolf") then
                     monsterpart = game:GetService("Workspace").FlowerZones["Cactus Field"].CFrame
                 elseif v.Name:match("Mantis") then
-                    monsterpart = game:GetService("Workspace").FlowerZones["Pine Tree Forest"].CFrame + Vector3.new(0, 15, 0)
+                    monsterpart = game:GetService("Workspace").FlowerZones["Pine Tree Forest"].CFrame + Vector3.new(10, 0, 0)
                 elseif v.Name:match("Mushroom") then
                     monsterpart = game:GetService("Workspace").Territories.MushroomZone.Part
                 else
@@ -1485,7 +1485,7 @@ task.spawn(function() while task.wait() do
                 if kocmoc.toggles.killmondo then
                     while kocmoc.toggles.killmondo and game.Workspace.Monsters:FindFirstChild("Mondo Chick (Lvl 8)") and not temptable.started.vicious and not temptable.started.monsters do
                         temptable.started.mondo = true
-                        while game.Workspace.Monsters:FindFirstChild("Mondo Chick (Lvl 8)") do
+                        while game.Workspace.Monsters:FindFirstChild("Mondo Chick (Lvl 8)") and kocmoc.toggles.killmondo do
                             disableall()
                             game:GetService("Workspace").Map.Ground.HighBlock.CanCollide = false 
                             mondopition = game.Workspace.Monsters["Mondo Chick (Lvl 8)"].Head.Position
