@@ -438,8 +438,6 @@ function killmobs()
             if v.Name ~= "Commando Chick" and v.Name ~= "CoconutCrab" and v.Name ~= "StumpSnail" and v.Name ~= "TunnelBear" and v.Name ~= "King Beetle Cave" and not v.Name:match("CaveMonster") and not v:FindFirstChild("TimerLabel", true).Visible then
                 if v.Name:match("Werewolf") then
                     monsterpart = game:GetService("Workspace").FlowerZones["Cactus Field"].CFrame
-                elseif v.Name:match("Mantis") then
-                    monsterpart = game:GetService("Workspace").FlowerZones["Pine Tree Forest"].CFrame + Vector3.new(10, 0, 0)
                 elseif v.Name:match("Mushroom") then
                     monsterpart = game:GetService("Workspace").Territories.MushroomZone.Part
                 else
