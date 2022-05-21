@@ -6,6 +6,8 @@ local pathfindingModule = {}
 
 local function followPath(destination,maxtime,events)
     
+    local pathBlocked = false
+
     local player = Players.LocalPlayer
     local character = player.Character
     local humanoid = character:WaitForChild("Humanoid")
@@ -33,7 +35,7 @@ local function followPath(destination,maxtime,events)
             events.onStart()
         end
     end
-    
+		
     task.spawn(function()
 	    local iterations = 0
 	    --local previousCFrame = character.HumanoidRootPart.CFrame
@@ -44,7 +46,7 @@ local function followPath(destination,maxtime,events)
 	            humanoid.Jump= true
 	        --end
            --previousCFrame = character.HumanoidRootPart.CFrame
-	    until (character.HumanoidRootPart.Position - destination).magnitude < 30 or iterations >= (maxtime/2)
+	    until (character.HumanoidRootPart.Position - destination).magnitude < 30 or iterations >= (maxtime/2) or pathBlocked == true
 	    
 	    if events then
 	       if iterations < (maxtime/2) then
@@ -58,6 +60,7 @@ local function followPath(destination,maxtime,events)
         print(waypoints)
 		blockedConnection = path.Blocked:Connect(function(blockedWaypointIndex)
 		    warn("path blocked")
+			pathBlocked = true
 			-- Check if the obstacle is further down the path
 			if blockedWaypointIndex >= nextWaypointIndex then
 				-- Stop detecting path blockage until path is re-computed
