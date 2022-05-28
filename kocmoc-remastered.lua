@@ -447,6 +447,7 @@ function killmobs()
                     mfd = game:GetService("Workspace").FlowerZones["Cactus Field"]
                     api.humanoidrootpart().CFrame = CFrame.new(mfd.Position.X, mfd.Position.Y, mfd.Position.Z)
                     task.wait(10)
+                    monsterpart = v.Territory.Value
                 elseif v.Name:match("Mushroom") then
                     monsterpart = game:GetService("Workspace").Territories.MushroomZone.Part
                 else
