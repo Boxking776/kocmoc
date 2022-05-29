@@ -793,9 +793,11 @@ petsmain:CreateButton("HATCH",function()
     StartHatch(Selectioni3y4r90yf)
 end)
 
-miscfeatures:CreateSlider("Walkspeed", 16, 200, 16, true, function(selection) task.spawn(function() game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = selection DelayedPost("WalkSpeed") end) end)--min,max,default
-miscfeatures:CreateSlider("Jump Power", 32, 200, 32, true, function(selection) task.spawn(function() game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = selection DelayedPost("JumpPower") end) end)--min,max,default
-miscfeatures:CreateSlider("Hip Height", 2, 50, 2, true, function(selection) task.spawn(function() game.Players.LocalPlayer.Character:WaitForChild("Humanoid").HipHeight = selection DelayedPost("HipHeight") end) end)--min,max,default
+local slidersDisabled = true
+
+miscfeatures:CreateSlider("Walkspeed", 16, 200, 16, true, function(selection) task.spawn(function() if not slidersDisabled then game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = selection DelayedPost("WalkSpeed") end end) end)--min,max,default
+miscfeatures:CreateSlider("Jump Power", 32, 200, 32, true, function(selection) task.spawn(function() if not slidersDisabled then game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = selection DelayedPost("JumpPower") end end) end)--min,max,default
+miscfeatures:CreateSlider("Hip Height", 2, 50, 2, true, function(selection) task.spawn(function() if not slidersDisabled then game.Players.LocalPlayer.Character:WaitForChild("Humanoid").HipHeight = selection DelayedPost("HipHeight") end end) end)--min,max,default
 miscfeatures:CreateLabel("")
 miscfeatures:CreateToggle("Fly Bypass",nil,function(bool)
     Toggle = bool
@@ -811,7 +813,9 @@ end)
 miscfeatures:CreateSlider("Fly Speed",75,300,100,true,function(selection)
     FlyForce = selection
 end)
+--[[
 miscfeatures:CreateSlider("Hoverboard Speed",1,3,2,true,function()
+if not slidersDisabled then 
 for i,v in pairs(game:GetService("ReplicatedStorage").Game.Hoverboards:GetChildren()) do
     local modul = nil
     for k,e in pairs(v:GetChildren()) do
@@ -830,9 +834,11 @@ end
 workspace.__THINGS.__REMOTES:FindFirstChild("update hoverboard state"):FireServer({false})
 wait(0.1)
 workspace.__THINGS.__REMOTES:FindFirstChild("update hoverboard state"):FireServer({true})
-end)
-miscfeatures:CreateLabel("")
+end end)]]
 
+slidersDisabled = false
+
+miscfeatures:CreateLabel("")
 notifs:CreateTextBox("Admin Notification","[ Enter Text ]",false,function(str) Post(str) end)
 notifs:CreateTextBox("Custom Notification","[ Enter Text ]",false,function(str) notif:Fire(str) end)
 notifs:CreateTextBox("Custom Popup","[ Enter Text ]",false,function(str) Popup:Fire(str, Color3.new(1, 999)); end)
