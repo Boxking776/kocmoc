@@ -200,7 +200,7 @@ local function getAllNormalPets()
         local isDM = v["dm"]
         local petId = v["uid"]
         local petnameid = v["id"]
-        if isDM == nil and isGold == nil and isDM == nil then
+        if isDM == nil and isGold == nil and isDM == nil and isRainbow == nil then
             print(petnameid)
             local data = getPetDataFromId(petnameid)
             print(data)
