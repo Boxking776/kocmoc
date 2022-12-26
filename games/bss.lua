@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.2.9",
+    version = "3.3.1",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -947,7 +947,7 @@ farmt:CreateToggle("Auto Onett's Lid Art [B]", nil, function(State) kocmoc.toggl
 farmt:CreateToggle("Auto Free Antpasses", nil, function(State) kocmoc.toggles.freeantpass = State end)
 farmt:CreateToggle("Farm Sprouts", nil, function(State) kocmoc.toggles.farmsprouts = State end)
 farmt:CreateToggle("Farm Puffshrooms", nil, function(State) kocmoc.toggles.farmpuffshrooms = State end)
-farmt:CreateToggle("Farm Snowflakes [⚠️][B]", nil, function(State) kocmoc.toggles.farmsnowflakes = State end)
+farmt:CreateToggle("Farm Snowflakes [🛡️] [B]", nil, function(State) kocmoc.toggles.farmsnowflakes = State end)
 farmt:CreateToggle("Teleport To Rares [⚠️]", nil, function(State) kocmoc.toggles.farmrares = State end)
 farmt:CreateToggle("Auto Accept/Confirm Quests [⚙]", nil, function(State) kocmoc.toggles.autoquest = State end)
 farmt:CreateToggle("Auto Do Quests [⚙]", nil, function(State) kocmoc.toggles.autodoquest = State end)
@@ -1790,17 +1790,22 @@ local vu = game:GetService("VirtualUser")
 game:GetService("Players").LocalPlayer.Idled:connect(function() vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)task.wait(1)vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
-task.spawn(function()while task.wait() do
-    if kocmoc.toggles.farmsnowflakes then
-        task.wait(3)
-        for i,v in next, temptable.tokenpath:GetChildren() do
-            if v:FindFirstChildOfClass("Decal") and v:FindFirstChildOfClass("Decal").Texture == "rbxassetid://6087969886" and v.Transparency == 0 then
-                api.humanoidrootpart().CFrame = CFrame.new(v.Position.X, v.Position.Y+3, v.Position.Z)
-                break
-            end
-        end
+local canTeleport = true
+game:GetService("Workspace").Particles.Snowflakes.ChildAdded:Connect(function(snowflake)
+    if canTeleport == true and kocmoc.toggles.farmsnowflakes == true then
+        local hash = tostring(math.random(1,10000))
+        snowflake.Name = hash
+        canTeleport = false
+        repeat
+           wait()
+           getgenv().temptable.float = true
+           game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = snowflake.CFrame + Vector3.new(0,7.5,0)
+        until game:GetService("Workspace").Particles.Snowflakes:FindFirstChild(hash) == nil
+        getgenv().temptable.float = false
+        wait(1)
+        canTeleport = true
     end
-end end)
+end)
 
 game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
     humanoid = char:WaitForChild("Humanoid")
