@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.3.5 Beta",
+    version = "3.3.7 Beta",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -681,11 +681,20 @@ function getflame()
 end
 
 function getdupe()
-    for i,v in next, game:GetService("Workspace").Camera.DupedTokens do
-        if tonumber((v.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude) < 1000 then
+    for i,v in next, game:GetService("Workspace").Camera.DupedTokens:GetChildren() do
+        if tonumber((v.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude) < 25 then
             if string.find(v.FrontDecal.Texture,"5877939956") or string.find(v.FrontDecal.Texture,"1629547638") then
             v.CFrame = v.CFrame - Vector3.new(0,5,0)
-            farm(v)
+                local hash = tostring(math.random(1,10000))
+                v.Name = hash
+                repeat wait(.05)
+                    getgenv().temptable.float = true
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                until game:GetService("Workspace").Camera.DupedTokens:FindFirstChild(hash) == nil
+                getgenv().temptable.float = false
+                break
+            else
+                farm(v)
             end
         end
     end
@@ -906,7 +915,7 @@ information:CreateLabel("Place version: "..game.PlaceVersion)
 information:CreateLabel("Script by Boxking776")
 information:CreateLabel("Originally by weuz_ and mrdevl")
 local gainedhoneylabel = information:CreateLabel("Gained Honey: 0")
-information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/kTNMzbxUuZ") end)
+information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/jjsploit") end)
 information:CreateButton("Donation", function() setclipboard("https://www.paypal.com/paypalme/GHubPay") end)
 information:CreateToggle("Status Panel",true,function(bool) 
 kocmoc.toggles.enablestatuspanel=bool 
