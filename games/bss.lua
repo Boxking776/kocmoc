@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.3.1",
+    version = "3.3.8",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -253,6 +253,7 @@ getgenv().kocmoc = {
     killerkocmoc = {},
     bltokens = {},
     toggles = {
+        farmduped = false,
         autofarm = false,
         farmclosestleaf = false,
         farmbubbles = false,
@@ -679,6 +680,26 @@ function getflame()
     end
 end
 
+function getdupe()
+    for i,v in next, game:GetService("Workspace").Camera.DupedTokens:GetChildren() do
+        if tonumber((v.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude) < 25 then
+            if string.find(v.FrontDecal.Texture,"5877939956") or string.find(v.FrontDecal.Texture,"1629547638") then
+            v.CFrame = v.CFrame - Vector3.new(0,5,0)
+                local hash = tostring(math.random(1,10000))
+                v.Name = hash
+                repeat wait(.05)
+                    getgenv().temptable.float = true
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                until game:GetService("Workspace").Camera.DupedTokens:FindFirstChild(hash) == nil
+                getgenv().temptable.float = false
+                break
+            else
+                farm(v)
+            end
+        end
+    end
+end
+
 function avoidmob()
     for i,v in next, game:GetService("Workspace").Monsters:GetChildren() do
         if v:FindFirstChild("Head") then
@@ -894,7 +915,7 @@ information:CreateLabel("Place version: "..game.PlaceVersion)
 information:CreateLabel("Script by Boxking776")
 information:CreateLabel("Originally by weuz_ and mrdevl")
 local gainedhoneylabel = information:CreateLabel("Gained Honey: 0")
-information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/kTNMzbxUuZ") end)
+information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/jjsploit") end)
 information:CreateButton("Donation", function() setclipboard("https://www.paypal.com/paypalme/GHubPay") end)
 information:CreateToggle("Status Panel",true,function(bool) 
 kocmoc.toggles.enablestatuspanel=bool 
@@ -906,7 +927,7 @@ else for i,v in pairs(game:GetService("CoreGui"):GetDescendants()) do if string.
 local farmo = farmtab:CreateSection("Farming")
 local fielddropdown = farmo:CreateDropdown("Field", fieldstable, function(String) kocmoc.vars.field = String end) fielddropdown:SetOption(fieldstable[1])
 convertatslider = farmo:CreateSlider("Convert At", 0, 100, 100, false, function(Value) kocmoc.vars.convertat = Value end)
-local autofarmtoggle = farmo:CreateToggle("Autofarm [⚙]", nil, function(State) kocmoc.toggles.autofarm = State end) autofarmtoggle:CreateKeybind("U", function(Key) end)
+local autofarmtoggle = farmo:CreateToggle("Autofarm [⚙]", nil, function(State) kocmoc.toggles.autofarm = State end) autofarmtoggle:CreateKeybind("I hate minorities",function(Key) end)
 farmo:CreateToggle("Autodig", nil, function(State) kocmoc.toggles.autodig = State end)
 farmo:CreateDropdown("Autodig Mode", {"Normal","Collector Steal"}, function(Option)  kocmoc.vars.autodigmode = Option end)
 
@@ -924,6 +945,7 @@ farmo:CreateToggle("Farm Precise Crosshairs", nil, function(State) kocmoc.toggle
 farmo:CreateToggle("Farm Fuzzy Bombs", nil, function(State) kocmoc.toggles.farmfuzzy = State end)
 farmo:CreateToggle("Farm Under Balloons", nil, function(State) kocmoc.toggles.farmunderballoons = State end)
 farmo:CreateToggle("Farm Under Clouds", nil, function(State) kocmoc.toggles.farmclouds = State end)
+farmo:CreateToggle("Farm Duped Tokens", nil, function(State) kocmoc.toggles.farmduped = State end)
 farmo:CreateLabel("")
 farmo:CreateToggle("Auto Honey Mask",nil,function(bool)
     kocmoc.toggles.honeymaskconv = bool
@@ -1364,12 +1386,13 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function() while task.wait() do
+task.spawn(function() while task.wait(0.05) do
     if kocmoc.toggles.autofarm then
         --if kocmoc.toggles.farmcoco then getcoco() end
         --if kocmoc.toggles.collectcrosshairs then getcrosshairs() end
         if kocmoc.toggles.farmflame then getflame() end
         if kocmoc.toggles.farmfuzzy then getfuzzy() end
+        if kocmoc.toggles.farmduped then getdupe() end
     end
 end end)
 
@@ -1644,10 +1667,10 @@ local function collectorSteal()
     end
 end
 
-task.spawn(function() while task.wait(0.001) do
-    if kocmoc.toggles.traincrab then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-259, 111.8, 496.4) * CFrame.fromEulerAnglesXYZ(0, 110, 90) temptable.float = true temptable.float = false end
+task.spawn(function() while task.wait(0.05) do
     if kocmoc.toggles.farmrares then for k,v in next, game.workspace.Collectibles:GetChildren() do if v.CFrame.YVector.Y == 1 then if v.Transparency == 0 then decal = v:FindFirstChildOfClass("Decal") for e,r in next, kocmoc.rares do if decal.Texture == r or decal.Texture == "rbxassetid://"..r then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame break end end end end end end
-    if kocmoc.toggles.autodig then 
+    if kocmoc.toggles.autodig then
+    pcall(function()
 	if game.Players.LocalPlayer then 
 		if game.Players.LocalPlayer.Character then 
 			if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") then 
@@ -1656,7 +1679,7 @@ task.spawn(function() while task.wait(0.001) do
 				end 
 			end 
 		end 
-	if tool then getsenv(tool.ClientScriptMouse).collectStart(game:GetService("Players").LocalPlayer:GetMouse()) end end collectorSteal() workspace.NPCs.Onett.Onett["Porcelain Dipper"].ClickEvent:FireServer() end
+	if tool then getsenv(tool.ClientScriptMouse).collectStart(game:GetService("Players").LocalPlayer:GetMouse()) end end collectorSteal() workspace.NPCs.Onett.Onett["Porcelain Dipper"].ClickEvent:FireServer() end) end
 end end)
 
 game:GetService("Workspace").Particles.Folder2.ChildAdded:Connect(function(child)
