@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.3.7 Beta",
+    version = "3.3.9 Beta",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -927,7 +927,7 @@ else for i,v in pairs(game:GetService("CoreGui"):GetDescendants()) do if string.
 local farmo = farmtab:CreateSection("Farming")
 local fielddropdown = farmo:CreateDropdown("Field", fieldstable, function(String) kocmoc.vars.field = String end) fielddropdown:SetOption(fieldstable[1])
 convertatslider = farmo:CreateSlider("Convert At", 0, 100, 100, false, function(Value) kocmoc.vars.convertat = Value end)
-local autofarmtoggle = farmo:CreateToggle("Autofarm [⚙]", nil, function(State) kocmoc.toggles.autofarm = State end) autofarmtoggle:CreateKeybind("I hate minorities",function(Key) end)
+local autofarmtoggle = farmo:CreateToggle("Autofarm [⚙]", nil, function(State) kocmoc.toggles.autofarm = State end) autofarmtoggle:CreateKeybind("U",function(Key) end)
 farmo:CreateToggle("Autodig", nil, function(State) kocmoc.toggles.autodig = State end)
 farmo:CreateDropdown("Autodig Mode", {"Normal","Collector Steal"}, function(Option)  kocmoc.vars.autodigmode = Option end)
 
@@ -961,6 +961,7 @@ farmt:CreateToggle("Auto Field Boosters [⚙]", nil, function(State) kocmoc.togg
 farmt:CreateToggle("Auto Wealth Clock", nil, function(State) kocmoc.toggles.clock = State end)
 farmt:CreateToggle("Auto Gingerbread Bears [B]", nil, function(State) kocmoc.toggles.collectgingerbreads = State end)
 farmt:CreateToggle("Auto Samovar [B]", nil, function(State) kocmoc.toggles.autosamovar = State end)
+farmt:CreateToggle("Auto Snow Machine [B]", nil, function(State) kocmoc.toggles.autosnowmachines = State end)
 farmt:CreateToggle("Auto Stockings [B]", nil, function(State) kocmoc.toggles.autostockings = State end)
 farmt:CreateToggle("Auto Planters", nil, function(State) kocmoc.toggles.autoplanters = State end):AddToolTip("Will re-plant your planters after converting, if they hit 100%")
 farmt:CreateToggle("Auto Honey Candles [B]", nil, function(State) kocmoc.toggles.autocandles = State end)
@@ -1727,6 +1728,9 @@ task.spawn(function() while task.wait(0.1) do
                     api.humanoidrootpart().CFrame = v.CFrame
                 end
             end
+        end
+        if kocmoc.toggles.autosnowmachines then
+            game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Snow Machine")
         end
         if kocmoc.toggles.autostockings then
             game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Stockings")
