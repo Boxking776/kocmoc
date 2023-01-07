@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.3.8",
+    version = "3.3.9",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -961,7 +961,9 @@ farmt:CreateToggle("Auto Field Boosters [⚙]", nil, function(State) kocmoc.togg
 farmt:CreateToggle("Auto Wealth Clock", nil, function(State) kocmoc.toggles.clock = State end)
 farmt:CreateToggle("Auto Gingerbread Bears [B]", nil, function(State) kocmoc.toggles.collectgingerbreads = State end)
 farmt:CreateToggle("Auto Samovar [B]", nil, function(State) kocmoc.toggles.autosamovar = State end)
+farmt:CreateToggle("Auto Snow Machine [B]", nil, function(State) kocmoc.toggles.autosnowmachines = State end)
 farmt:CreateToggle("Auto Stockings [B]", nil, function(State) kocmoc.toggles.autostockings = State end)
+farmt:CreateToggle("Auto Honey Wreath [B]", nil, function(State) kocmoc.toggles.autowreath = State end)
 farmt:CreateToggle("Auto Planters", nil, function(State) kocmoc.toggles.autoplanters = State end):AddToolTip("Will re-plant your planters after converting, if they hit 100%")
 farmt:CreateToggle("Auto Honey Candles [B]", nil, function(State) kocmoc.toggles.autocandles = State end)
 farmt:CreateToggle("Auto Beesmas Feast [B]", nil, function(State) kocmoc.toggles.autofeast = State end)
@@ -1728,9 +1730,21 @@ task.spawn(function() while task.wait(0.1) do
                 end
             end
         end
+        if kocmoc.toggles.autosnowmachines then
+            game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Snow Machine")
+        end
         if kocmoc.toggles.autostockings then
             game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Stockings")
             platformm = game:GetService("Workspace").Toys.Stockings.Platform
+            for i,v in pairs(game.Workspace.Collectibles:GetChildren()) do
+                if (v.Position-platformm.Position).magnitude < 25 and v.CFrame.YVector.Y == 1 then
+                    api.humanoidrootpart().CFrame = v.CFrame
+                end
+            end
+        end
+                if kocmoc.toggles.autowreath then
+            game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Honey Wreath")
+            platformm = game:GetService("Workspace").Toys["Honey Wreath"].Platform
             for i,v in pairs(game.Workspace.Collectibles:GetChildren()) do
                 if (v.Position-platformm.Position).magnitude < 25 and v.CFrame.YVector.Y == 1 then
                     api.humanoidrootpart().CFrame = v.CFrame
