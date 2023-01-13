@@ -38,7 +38,7 @@ for _, v in pairs(game:GetService("CoreGui"):GetDescendants()) do
     end
 end
 getgenv().temptable = {
-    version = "3.3.9",
+    version = "3.4.0",
     blackfield = "Sunflower Field",
     redfields = {},
     bluefields = {},
@@ -823,6 +823,9 @@ local function useConvertors()
         if GetItemListWithValue()["Coconut"] > 0 and string.find(kocmoc.vars.autouseMode,"Coconut") or string.find(kocmoc.vars.autouseMode,"All") then
         game:GetService("ReplicatedStorage").Events.PlayerActivesCommand:FireServer({["Name"] = "Coconut"})
         end
+                if GetItemListWithValue()["Stinger"] > 0 and string.find(kocmoc.vars.autouseMode,"Stinger") or string.find(kocmoc.vars.autouseMode,"All") then
+        game:GetService("ReplicatedStorage").Events.PlayerActivesCommand:FireServer({["Name"] = "Stinger"})
+        end
 end
 
 local function fetchBuffTable(stats)
@@ -912,7 +915,7 @@ information:CreateLabel(" - Not Safe Function")
 information:CreateLabel("⚙ - Configurable Function")
 information:CreateLabel("📜 - May be exploit specific")
 information:CreateLabel("Place version: "..game.PlaceVersion)
-information:CreateLabel("Script by Boxking776")
+information:CreateLabel("Script by Boxking776 and Schervi")
 information:CreateLabel("Originally by weuz_ and mrdevl")
 local gainedhoneylabel = information:CreateLabel("Gained Honey: 0")
 information:CreateButton("Discord Invite", function() setclipboard("https://discord.gg/jjsploit") end)
@@ -934,7 +937,7 @@ farmo:CreateDropdown("Autodig Mode", {"Normal","Collector Steal"}, function(Opti
 local contt = farmtab:CreateSection("Container Tools")
 contt:CreateToggle("Don't Convert Pollen", nil, function(State) kocmoc.toggles.disableconversion = State end)
 contt:CreateToggle("Auto Bag Reduction",nil,function(Boole) kocmoc.toggles.autouseconvertors = Boole end)
-contt:CreateDropdown("Bag Reduction Mode",{"Ticket Converters","Just Snowflakes","Just Coconuts","Snowflakes and Coconuts","Tickets and Snowflakes","Tickets and Coconuts","All"},function(Select) kocmoc.vars.autouseMode = Select end)
+contt:CreateDropdown("Bag Reduction Mode",{"Ticket Converters","Just Snowflakes","Just Coconuts","Stingers","Snowflakes and Coconuts","Tickets and Snowflakes","Tickets and Coconuts","All"},function(Select) kocmoc.vars.autouseMode = Select end)
 contt:CreateSlider("Reduction Confirmation Time",3,20,10,false,function(tttttttt) kocmoc.vars.autoconvertWaitTime = tonumber(tttttttt) end)
 
 farmo:CreateToggle("Auto Sprinkler", nil, function(State) kocmoc.toggles.autosprinkler = State end)
