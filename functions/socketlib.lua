@@ -52,7 +52,7 @@ house.NewSession = function(socketUrl)
         connection = global_new_websocket_connection(socketUrl)
     end)
     if not s or not connection then
-        HandleError(e or "Unknown error connecting to socket\n")
+        house.HandleError(e or "Unknown error connecting to socket\n")
         return;
     end
     connection.OnClose:Connect(function()
